@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+
+# 2048×2048 烘焙中间产物（每张 ~2.6MB，可由 bake_all.py 重新生成）
+output/

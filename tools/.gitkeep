@@ -1,0 +1,8 @@
+# tools/
+
+待 v0.1 发布时迁入：
+
+- `gauge_bakery/` — PNG 仪表底图烘焙流水线（YAML 配置 → crop_stretch_mask → snap_to_circle → seal_by_copy → bake_ticks）
+- `png_to_lvgl9.py` — PNG → LVGL 9 RGB888 C 数组转换器
+- `pack_assets.py` — LVGL 8 PNG → C 数组打包工具
+- `fetch_libs.sh` — 从 GitHub Releases 拉对应版本的闭源 .a 静态库

@@ -1,0 +1,110 @@
+# 圆形仪表批量烘焙配置
+# 所有路径相对此文件所在目录
+
+defaults:
+  src: assets/bg_round_final.png
+  angle_start: -180        # 6 点位置
+  angle_end: 45            # 1:30 位置
+  tick_radius: 1010
+  tick_major_len: 115
+  tick_minor_len: 60
+  tick_major_width: 10
+  tick_minor_width: 4
+  label_radius: 650
+  font: /System/Library/Fonts/Supplemental/Impact.ttf
+  font_size: 220
+  title_x: 1600
+  title_y: 970
+  title_font_size: 220
+  title_effect: shadow
+  unit_x: 1720
+  unit_y: 1600
+  unit_font_size: 180
+  unit_anchor: right
+  unit_effect: shadow
+  zone_r_inner: 895
+  zone_r_outer: 1011
+
+gauges:
+  - name: coolant
+    title: COOLANT
+    unit: "°C"
+    value_min: 60
+    value_max: 140
+    major_step: 20
+    minor_div: 5
+    labels: ["60", "80", "100", "120", "140"]
+    warn_from: 100
+    danger_from: 120
+
+  - name: oil_temp
+    title: OIL TEMP
+    unit: "°C"
+    value_min: 60
+    value_max: 150
+    major_step: 20
+    minor_div: 5
+    labels: ["60", "80", "100", "120", "140"]
+    warn_from: 120
+    danger_from: 130
+
+  - name: rpm
+    title: RPM
+    unit: "x1000"
+    value_min: 0
+    value_max: 8000
+    major_step: 1000
+    minor_div: 5
+    # value:text — 显示成 0 1 2 ... 8，对应位置 0 1000 ... 8000
+    labels: ["0:0", "1000:1", "2000:2", "3000:3", "4000:4", "5000:5", "6000:6", "7000:7", "8000:8"]
+    danger_from: 7000
+
+  - name: speed
+    title: SPEED
+    unit: KM/H
+    value_min: 0
+    value_max: 340
+    major_step: 40
+    minor_div: 4
+    # 9 个 3 位数会撞——只标 5 个 label，刻度密度不变（主刻 40、次刻 10）
+    labels: ["0", "80", "160", "240", "320"]
+
+  - name: volts
+    title: VOLTS
+    unit: V
+    value_min: 10
+    value_max: 16
+    major_step: 1
+    minor_div: 5
+    labels: ["10", "11", "12", "13", "14", "15", "16"]
+
+  - name: intake
+    title: INTAKE
+    unit: "°C"
+    value_min: -20
+    value_max: 80
+    major_step: 20
+    minor_div: 4
+    labels: ["-20", "0", "20", "40", "60", "80"]
+    warn_from: 60
+    danger_from: 70
+
+  - name: boost
+    title: BOOST
+    unit: BAR
+    value_min: -1.0
+    value_max: 2.0
+    major_step: 0.5
+    minor_div: 5
+    labels: ["-1.0:-1", "-0.5", "0", "0.5", "1.0:1", "1.5", "2.0:2"]
+    warn_from: 1.5
+    danger_from: 1.8
+
+  - name: afr
+    title: AFR
+    unit: "λ"
+    value_min: 10
+    value_max: 18
+    major_step: 2
+    minor_div: 4
+    labels: ["10", "12", "14", "16", "18"]

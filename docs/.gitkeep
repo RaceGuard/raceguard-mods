@@ -1,0 +1,9 @@
+# docs/
+
+待 v0.1 发布时补充：
+
+- `ARCHITECTURE.md` — SDK 架构总览
+- `ADD_CAR_PROFILE.md` — 适配新车型的完整指南
+- `ADD_GAUGE_THEME.md` — 自定义仪表风格的完整指南
+- `BAKE_GAUGE.md` — 烘焙工具链使用说明
+- `FAQ.md` — 常见问题

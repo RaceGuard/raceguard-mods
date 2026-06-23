@@ -1,0 +1,82 @@
+# ============ PlatformIO ============
+.pio/
+.pioenvs/
+.piolibdeps/
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch
+.clang-tidy
+
+# ============ ESP-IDF ============
+build/
+sdkconfig
+sdkconfig.old
+sdkconfig.*.old
+managed_components/
+dependencies.lock
+
+# ============ 预编译核心库 (由 fetch_core.sh 拉取, 不入仓) ============
+lib/raceguard_core/*.a
+lib/raceguard_core/*.so
+lib/raceguard_core/*.dylib
+lib/raceguard_core/include/
+lib/raceguard_core/headers-*.tar.gz
+lib/raceguard_core/checksums.sha256
+
+# ============ 烘焙工具产物 (设计师本地素材, 不入仓) ============
+tools/gauge_bakery/output/
+tools/gauge_bakery/*.png
+# 设计师 PNG 源材料 (本地资源, 不入公开仓)
+tools/gauge_bakery/assets/
+
+# ============ macOS ============
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ============ Windows ============
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============ Linux ============
+*~
+.directory
+
+# ============ IDE / Editor ============
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+.project
+.cproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ============ Python (烘焙脚本用) ============
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# ============ 编译产物 ============
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.map
+
+# ============ 个人配置 / 临时 ============
+.env
+.env.local
+*.local.json
+TODO.local.md
+NOTES.local.md
