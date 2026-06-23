@@ -18,10 +18,31 @@ static inline int16_t boundsH(const lv_area_t& b) { return b.y2 - b.y1 + 1; }
 
 PngGaugeCard::PngGaugeCard(const Def* defs, uint8_t count, uint8_t default_idx)
     : defs_(defs), count_(count), cur_idx_(default_idx) {
-    if (cur_idx_ >= count_ || !defs_[cur_idx_].enabled_default) {
+    // 初始化运行期 enabled bitmap (上限 MAX_GAUGES, 超出部分不可见)
+    uint8_t init_count = (count_ < MAX_GAUGES) ? count_ : MAX_GAUGES;
+    for (uint8_t i = 0; i < init_count; ++i) {
+        enabled_[i] = defs_[i].enabled_default;
+    }
+    if (cur_idx_ >= count_ || !enabled_[cur_idx_]) {
         // 默认 idx 不可用，找下一个 enabled 的
         cur_idx_ = nextEnabledIdx();
     }
+}
+
+void PngGaugeCard::setEnabled(uint8_t idx, bool enabled) {
+    if (idx >= count_ || idx >= MAX_GAUGES) return;
+    enabled_[idx] = enabled;
+    // 若关闭了当前显示的表, 自动切到下一个 enabled
+    if (!enabled && idx == cur_idx_) {
+        uint8_t next = nextEnabledIdx();
+        if (next != cur_idx_) {
+            switchTo(next);
+        }
+    }
+}
+
+bool PngGaugeCard::isEnabled(uint8_t idx) const {
+    return (idx < count_ && idx < MAX_GAUGES) ? enabled_[idx] : false;
 }
 
 PngGaugeCard::~PngGaugeCard() {
@@ -40,7 +61,7 @@ const char* PngGaugeCard::name() const {
 uint8_t PngGaugeCard::nextEnabledIdx() const {
     for (uint8_t step = 1; step <= count_; ++step) {
         uint8_t idx = (uint8_t)((cur_idx_ + step) % count_);
-        if (defs_[idx].enabled_default) return idx;
+        if (idx < MAX_GAUGES && enabled_[idx]) return idx;
     }
     return cur_idx_;  // 都未启用，停在当前
 }

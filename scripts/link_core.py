@@ -16,16 +16,8 @@ Import("env")  # noqa: F821
 LIB_DIR = os.path.join(env["PROJECT_DIR"], "lib", "raceguard_core")  # noqa: F821
 ENV_NAME = env["PIOENV"]  # noqa: F821
 
-# 按 env 后缀过滤 (round-led-21 → led; p4-bar-dsi → p4)
-if "led" in ENV_NAME:
-    suffix = "led"
-elif "p4" in ENV_NAME:
-    suffix = "p4"
-else:
-    print(f"[link_core] 未知 env '{ENV_NAME}', 跳过 .a 链接")
-    raise SystemExit(0)
-
-pattern = os.path.join(LIB_DIR, f"libraceguard-core-*-{suffix}.a")
+# 主仓 pack_lib.sh 输出 libraceguard-core-<version>-<env>.a, 按完整 env 名匹配
+pattern = os.path.join(LIB_DIR, f"libraceguard-core-*-{ENV_NAME}.a")
 matches = sorted(glob.glob(pattern))
 
 if not matches:

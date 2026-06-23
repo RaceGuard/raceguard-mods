@@ -51,10 +51,24 @@ public:
     // 数据源 OBD 5-10Hz，UI 20FPS 跑 EMA 平滑插值让指针动得丝滑
     uint16_t preferredUpdateMs() const override { return 50; }
 
+    // 运行期开关单个仪表 (用户层 raceguard::ui::setGaugeEnabled API 调用):
+    //   - 长按轮换会跳过 disabled 表
+    //   - 若 disabled 当前显示的表, 自动切到下一个 enabled
+    void setEnabled(uint8_t idx, bool enabled);
+    bool isEnabled(uint8_t idx) const;
+    uint8_t count() const { return count_; }
+
+    // 仪表名 (mods 用户查询用)
+    const char* nameAt(uint8_t idx) const {
+        return (idx < count_ && defs_) ? defs_[idx].name : nullptr;
+    }
+
 private:
+    static constexpr uint8_t MAX_GAUGES = 16;
     const Def* defs_  = nullptr;
     uint8_t    count_ = 0;
     uint8_t    cur_idx_ = 0;
+    bool       enabled_[MAX_GAUGES] = {};   // 运行期可调; 构造时从 def.enabled_default 拷贝
 
     // ── LVGL 对象 ──
     lv_obj_t* bg_img_      = nullptr;

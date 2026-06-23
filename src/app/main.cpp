@@ -1,34 +1,23 @@
-// RaceGuard mods 主入口模板
+// RaceGuard mods 主入口
 //
-// 一个典型的车载仪表盘 firmware 大概就这么个骨架. 你可以直接拿去改, 也可以
-// 把它当成参考然后自己重写 main.
+// 一个最小骨架, 直接拿去改即可. 全部业务逻辑在 raceguard::backend 内部:
+//   ACTIVATED → 全功能 (OBD/SD/告警/导航/电源/UI)
+//   DEMO      → UI 框架 + mock 数据驱动 (空白 ESP32 可烧机演示)
 //
-// 链路:
-//   raceguard::hal::platform::initHardware()    硬件初始化 (由核心库处理)
-//   raceguard::hal::display::startRefresh()     启动显示
-//   raceguard::obd::init()                      启动 OBD 后端
-//   raceguard::car::registerProfile(YOUR_CAR)   注册你的车型 profile
-//   主循环: poll OBD → UI 更新 → 告警检查
+// 烧到任何 ESP32 都能进 DEMO 看到 UI 卡片动画; 商业盒子 NVS 预写激活码自动 ACTIVATED.
+// 设置菜单点 ACTIVATE → 手机连 WiFi 输 16 位激活码 → 重启进 ACTIVATED.
 //
-// v0.0.x: 核心库还没发布, 本文件目前不能 build. v0.1 发布后:
+// 快速上手:
 //   1. git clone raceguard-mods
-//   2. ./scripts/fetch_core.sh v0.1.0
-//   3. cp examples/cars/nissan_gtr_r35/profile.cpp src/app/  (或自己写)
-//   4. pio run -e round-led-21 -t upload
+//   2. ./scripts/fetch_core.sh v0.1.1-dev   (拉预编译 .a)
+//   3. pio run -e round-led-21 -t upload
 
 #include <Arduino.h>
 
 #include <raceguard/version.h>
 #include <raceguard/log.h>
 #include <raceguard/hal.h>
-#include <raceguard/obd.h>
-#include <raceguard/data.h>
-#include <raceguard/alert.h>
-#include <raceguard/car.h>
-#include <raceguard/storage.h>
-
-// 用户在 examples/cars/<品牌_车型>/profile.cpp 中定义并提供
-// extern void registerUserCarProfile();
+#include <raceguard/backend.h>
 
 void setup() {
     raceguard::log::init(115200);
@@ -42,32 +31,10 @@ void setup() {
         while (true) delay(1000);
     }
 
-    raceguard::hal::display::startRefresh();
-    raceguard::storage::init();
-    raceguard::obd::init();
-    raceguard::alert::init();
-
-    // 注册你的车型 (示例: GT-R)
-    // registerUserCarProfile();
-
-    RG_LOG_INFO("Setup complete.");
+    raceguard::hal::display::setBrightness(0);   // 等 UI 第一帧再亮
+    raceguard::backend::startAll();
 }
 
 void loop() {
-    raceguard::hal::touch::update();
-
-    // OBD 轮询: 数据写入 raceguard::data::latest()
-    raceguard::obd::poll(raceguard::data::latest());
-
-    // 告警检查
-    auto sev = raceguard::alert::check(raceguard::data::latest());
-    if (sev != raceguard::alert::Severity::NONE) {
-        // UI 弹告警 (核心库处理)
-    }
-
-    // UI 更新: 调用本仓 src/ui/common/ 框架 (PngGaugeCard 等)
-    // TODO v0.1: 这里调用 raceguard_mods::ui::update();
-    //            目前 UI 框架还没暴露统一入口
-
-    delay(2);
+    raceguard::backend::tick();
 }
