@@ -2,9 +2,9 @@
 
 #include "fuel_trim_card.h"
 #include "../screen_profile.h"
-#include "types/globals.h"
-#include "types/car_data.h"
-#include "utils/debug.h"
+#include <raceguard/data.h>
+#include <raceguard/car_data.h>
+#include <raceguard/log.h>
 
 #include <cstdio>
 #include <cstring>
@@ -467,7 +467,7 @@ void FuelTrimCard::onUnmount() {
 // ============ 数据更新 ============
 void FuelTrimCard::update() {
     if (!container_) return;
-    const CarData& d = latestData;
+    const CarData& d = raceguard::data::latest();
     const lv_color_t colNoData = lv_color_make(100, 100, 100);
     char buf[24];
 

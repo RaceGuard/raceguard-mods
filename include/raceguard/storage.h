@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../src/types/car_data.h"
+#include <raceguard/car_data.h>
 
 namespace raceguard::storage {
 

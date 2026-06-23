@@ -4,7 +4,7 @@
 
 #include "gauge_card.h"
 #include "../lv_compat.h"
-#include "types/car_data.h"
+#include <raceguard/car_data.h>
 #include <cstdint>
 
 namespace UI {

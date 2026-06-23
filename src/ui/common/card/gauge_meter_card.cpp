@@ -4,9 +4,9 @@
 #include "gauge_meter_card.h"
 #include "../screen_profile.h"
 #include "../../led/gauge_params.h"
-#include "types/globals.h"
-#include "types/car_data.h"
-#include "utils/debug.h"
+#include <raceguard/data.h>
+#include <raceguard/car_data.h>
+#include <raceguard/log.h>
 
 #if defined(DISPLAY_TYPE_P4_BAR)
 // P4 (ESP-IDF) — 用 esp_timer / nvs_flash 替代 Arduino API
@@ -543,11 +543,12 @@ void GaugeMeterCard::update() {
     flushNVSIfDirty();
 
     const GaugeParamDef& def = getGaugeDef((GaugeParamID)param_id_);
-    bool has = hasGaugeValue((GaugeParamID)param_id_, latestData);
+    const CarData& cd = raceguard::data::latest();
+    bool has = hasGaugeValue((GaugeParamID)param_id_, cd);
     char buf[40];
 
     if (has) {
-        float val = getGaugeValue((GaugeParamID)param_id_, latestData);
+        float val = getGaugeValue((GaugeParamID)param_id_, cd);
         float range = def.maxVal - def.minVal;
 
         if (std::isnan(session_min_) || val < session_min_) session_min_ = val;

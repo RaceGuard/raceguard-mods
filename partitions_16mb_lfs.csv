@@ -1,0 +1,9 @@
+# GTR-BlackBox 16MB Flash 分区表（含 LittleFS）
+# v0.8.0+：app0/app1 从 4MB → 6MB（容纳 8 张烘焙仪表 PNG ~2MB），littlefs 从 8MB → 4MB
+# 升级需用串口烧整片一次（旧 OTA 不能升上来——分区偏移变了）
+# Name,     Type, SubType,  Offset,   Size,     Flags
+nvs,        data, nvs,      0x9000,   0x5000,
+otadata,    data, ota,      0xE000,   0x2000,
+app0,       app,  ota_0,    0x10000,  0x600000,
+app1,       app,  ota_1,    0x610000, 0x600000,
+littlefs,   data, littlefs, 0xC10000, 0x3F0000,

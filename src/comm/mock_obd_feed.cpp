@@ -2,7 +2,7 @@
 #if defined(DISPLAY_TYPE_P4_BAR) || defined(LED_MOCK_OBD_FEED)
 
 #include "mock_obd_feed.h"
-#include "../types/car_data.h"
+#include <raceguard/car_data.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

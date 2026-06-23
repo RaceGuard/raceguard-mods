@@ -2,9 +2,9 @@
 
 #include "timing_card.h"
 #include "../screen_profile.h"
-#include "types/globals.h"
-#include "types/car_data.h"
-#include "utils/debug.h"
+#include <raceguard/data.h>
+#include <raceguard/car_data.h>
+#include <raceguard/log.h>
 
 #include <cstdio>
 #include <cstring>
@@ -481,7 +481,7 @@ void TimingCard::onUnmount() {
 void TimingCard::update() {
     if (!container_) return;
 
-    const CarData& d = latestData;
+    const CarData& d = raceguard::data::latest();
     bool has_tim  = CarData::hasValue(d.timing_advance);
     bool has_load = CarData::hasValue(d.engine_load);
     bool has_cool = CarData::hasValue(d.coolant_temp);

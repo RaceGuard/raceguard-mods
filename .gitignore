@@ -80,3 +80,4 @@ venv/
 *.local.json
 TODO.local.md
 NOTES.local.md
+release/

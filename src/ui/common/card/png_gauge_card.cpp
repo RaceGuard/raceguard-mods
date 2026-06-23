@@ -1,8 +1,8 @@
 #if defined(DISPLAY_TYPE_LED) || defined(DISPLAY_TYPE_P4_BAR)
 
 #include "png_gauge_card.h"
-#include "types/globals.h"
-#include "utils/debug.h"
+#include <raceguard/data.h>
+#include <raceguard/log.h>
 
 #include <cstdio>
 #include <cmath>
@@ -219,8 +219,9 @@ void PngGaugeCard::update() {
     constexpr float ALPHA = 0.45f;
     char buf[16];
 
-    if (d->has_value(latestData)) {
-        float v = d->getter(latestData);
+    const CarData& cd = raceguard::data::latest();
+    if (d->has_value(cd)) {
+        float v = d->getter(cd);
         float range = d->value_max - d->value_min;
         float norm = (range > 0.0f) ? (v - d->value_min) / range : 0.0f;
         if (norm < 0.0f) norm = 0.0f;

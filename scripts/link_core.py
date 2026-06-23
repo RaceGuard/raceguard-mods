@@ -38,5 +38,11 @@ if not matches:
 a_file = matches[-1]
 print(f"[link_core] ✅ 链接 {os.path.basename(a_file)}")
 
-# 追加到 LINKFLAGS - 用 -l: 让 ld 接受任意 .a 文件名
-env.Append(LINKFLAGS=[a_file])  # noqa: F821
+# --whole-archive 强制 ld 保留 .a 内所有符号 (即使没被 .o 引用).
+# 否则因为 PIO 把 LINKFLAGS 放在 .o 之前, ld 先扫 .a 时 .o 的 undefined refs 还
+# 没出现, .a 里的符号会被丢弃, 之后 .o 再用到就报 undefined reference.
+env.Append(LINKFLAGS=[  # noqa: F821
+    "-Wl,--whole-archive",
+    a_file,
+    "-Wl,--no-whole-archive",
+])
