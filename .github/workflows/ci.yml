@@ -25,7 +25,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
+          # 不开 cache: 'pip' — 本仓没 requirements.txt, setup-python pip cache 算 key 失败.
+          # PIO 缓存走下面 actions/cache (PIO core + platform 是 ~200MB 大头, pip 小)
 
       - name: Cache PlatformIO core + platform
         uses: actions/cache@v4
