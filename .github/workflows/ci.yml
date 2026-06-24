@@ -76,3 +76,19 @@ jobs:
             echo "=== LittleFS image ==="
             ls -la .pio/build/round-led-21/*.bin | grep -i 'spiffs\|littlefs' || true
           fi
+
+  # Summary job: matrix 全过才通过. Branch Protection 配这个固定 job name 作为 required check.
+  # 这样未来 matrix 加 config 不需要改 Branch Protection settings.
+  build-summary:
+    name: build round-led-21 + buildfs
+    needs: build-led
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all matrix builds passed
+        run: |
+          if [ "${{ needs.build-led.result }}" != "success" ]; then
+            echo "❌ One or more matrix builds failed"
+            exit 1
+          fi
+          echo "✅ All matrix builds passed"
