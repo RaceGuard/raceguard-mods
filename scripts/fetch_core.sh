@@ -17,8 +17,23 @@
 set -euo pipefail
 
 REPO="RaceGuard/raceguard-mods"
-LIB_DIR="$(cd "$(dirname "$0")/.." && pwd)/lib/raceguard_core"
-VERSION="${1:-latest}"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+LIB_DIR="${REPO_ROOT}/lib/raceguard_core"
+
+# Version 解析优先级 (v0.2.0-dev.3+):
+#   1. 命令行参数 ./scripts/fetch_core.sh <version>  (显式最优)
+#   2. CORE_VERSION 文件 (本仓 pin 的版本, 维护者升级时改)
+#   3. 'latest' fallback (无 pin 时拉 GitHub 最新 release, 含 prerelease)
+# 设计目的: user fork 后跑 ./scripts/fetch_core.sh 总是拉到跟代码兼容的 .a, 不会因
+# 主仓发新 release 突然踩到不兼容变更.
+if [[ $# -ge 1 ]]; then
+    VERSION="$1"
+elif [[ -f "${REPO_ROOT}/CORE_VERSION" ]]; then
+    VERSION=$(cat "${REPO_ROOT}/CORE_VERSION" | tr -d '[:space:]')
+    echo "===> Using pinned version from CORE_VERSION: ${VERSION}"
+else
+    VERSION="latest"
+fi
 
 mkdir -p "${LIB_DIR}"
 

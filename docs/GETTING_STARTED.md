@@ -206,6 +206,20 @@ Platform: Waveshare-ESP32-S3-2.1
 | **写自定义 UI 卡片** | 看 `src/ui/common/card/png_gauge_card.cpp` 学着写, v0.2 出文档 |
 | **接非 ESP32-S3 硬件** | 暂不支持. P4 长条屏 / EPD 见 [项目路线图](../README.md#路线图) |
 
+### 常用 dev 脚本
+
+```bash
+./scripts/new_car.sh <品牌_车型>      # 一行生成新车型 mod 框架 (cp 模板 + sed namespace)
+./scripts/new_theme.sh <风格> "作者"  # 一行生成新主题包框架
+./scripts/flash_all.sh                # 一键烧 firmware + LittleFS (=upload + uploadfs)
+./scripts/fetch_core.sh               # 读 CORE_VERSION 文件 pin 的版本拉 .a (不传 tag 时)
+```
+
+### mod 注册位置
+
+加 car / theme mod 编辑 [`src/app/active_mods.cpp`](../src/app/active_mods.cpp) 取消注释对应行,
+**不要改 `main.cpp`** — 多人 PR 时改 main.cpp 必冲突. active_mods.cpp 是集中注册点.
+
 ---
 
 ## 5. 常见问题

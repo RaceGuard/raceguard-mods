@@ -5,12 +5,16 @@
 
 ## 5 步搞定 (~30 min 写代码 + ~1 小时实车测试)
 
-### Step 1: 复制 BMW 模板
+### Step 1: 用 cookie-cutter 一行生成
 
 ```bash
-cp -r examples/cars/bmw_template examples/cars/<品牌_车型_代号>
-# 例: cp -r examples/cars/bmw_template examples/cars/honda_civic_fk7
+./scripts/new_car.sh <品牌_车型_代号>
+# 例: ./scripts/new_car.sh honda_civic_fk7
 ```
+
+脚本自动: cp bmw_template + sed namespace 全替换 + 打印接下来 6 步指引.
+
+(老式手工: `cp -r examples/cars/bmw_template examples/cars/<新车型>/` 也行, 但要手动 sed namespace, 容易漏)
 
 命名规则: 全小写, 下划线分隔, 含 *年代代号* 区分同型号不同年代:
 - ✅ `honda_civic_fk7` (10 代思域 17-21)

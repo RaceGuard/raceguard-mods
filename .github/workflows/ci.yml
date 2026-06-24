@@ -14,9 +14,16 @@ concurrency:
 
 jobs:
   build-led:
-    name: build round-led-21 + buildfs
+    name: build ${{ matrix.config }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false       # 一个 mod fail 不取消其他, 看清谁挂了
+      matrix:
+        config:
+          - default          # 空 active_mods, 默认 pio run + buildfs (跟 v0.2.0-dev.3 一致)
+          - nissan_gtr_r35   # 启用 GT-R 车型 mod, verify example 仍 build
+          - bmw_template     # 启用 BMW 模板, verify example 仍 build
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +33,6 @@ jobs:
         with:
           python-version: '3.11'
           # 不开 cache: 'pip' — 本仓没 requirements.txt, setup-python pip cache 算 key 失败.
-          # PIO 缓存走下面 actions/cache (PIO core + platform 是 ~200MB 大头, pip 小)
 
       - name: Cache PlatformIO core + platform
         uses: actions/cache@v4
@@ -40,27 +46,33 @@ jobs:
             ${{ runner.os }}-pio-
 
       - name: Install PlatformIO Core
-        run: |
-          pip install --upgrade platformio
+        run: pip install --upgrade platformio
 
-      - name: Fetch raceguard_core (.a + headers from latest release)
+      - name: Fetch raceguard_core (.a + headers, 按 CORE_VERSION pin)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 拉 latest release (CI 跑 main / PR 都用最新发布的 .a verify)
-          # 注: tag 名要跟 release 一致, 如果新版本不一致需要更新此处
           chmod +x ./scripts/fetch_core.sh
           ./scripts/fetch_core.sh
 
-      - name: Build firmware (pio run)
-        run: pio run -e round-led-21
+      - name: Build firmware (config = ${{ matrix.config }})
+        run: |
+          if [ "${{ matrix.config }}" = "default" ]; then
+            pio run -e round-led-21
+          else
+            chmod +x ./scripts/build_with_mod.sh
+            ./scripts/build_with_mod.sh cars ${{ matrix.config }}
+          fi
 
-      - name: Build LittleFS image (pio run -t buildfs)
+      - name: Build LittleFS image (default config only)
+        if: matrix.config == 'default'
         run: pio run -e round-led-21 -t buildfs
 
       - name: Report sizes
         run: |
-          echo "=== firmware.bin ==="
+          echo "=== firmware.bin (${{ matrix.config }}) ==="
           ls -la .pio/build/round-led-21/firmware.bin
-          echo "=== LittleFS image ==="
-          ls -la .pio/build/round-led-21/*.bin | grep -i 'spiffs\|littlefs' || true
+          if [ "${{ matrix.config }}" = "default" ]; then
+            echo "=== LittleFS image ==="
+            ls -la .pio/build/round-led-21/*.bin | grep -i 'spiffs\|littlefs' || true
+          fi

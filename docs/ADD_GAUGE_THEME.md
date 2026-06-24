@@ -103,10 +103,14 @@ cd raceguard-mods
 ### Step 3: 放进 data/themes/ 目录
 
 ```bash
-# 从 bake_all 产物 cp
+# 推荐: 用 cookie-cutter 一行起步 (cp dark_minimal + 改 manifest.name)
+./scripts/new_theme.sh <风格名> "Your Name"
+# 然后替换 data/themes/<风格名>/gauge_*.png 成你自己的设计
+
+# 或: 已经用 bake_all 烘焙好了
 cp -r tools/gauge_bakery/output/themes/<主题名> data/themes/
 
-# 或者从你手写的目录 cp
+# 或: 完全手写
 cp -r my_designed_theme data/themes/<主题名>
 ```
 
