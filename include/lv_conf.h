@@ -144,4 +144,15 @@
 #define LV_DRAW_BUF_STRIDE_ALIGN 1
 #define LV_USE_DRAW_SIMPLE 1
 
+/* ============ 文件系统驱动 (v0.2.0+: FS 主题包) ============ */
+/* LVGL 8.3 自带 lv_fs_posix, 包装 POSIX open/read/seek API.
+ * Arduino-ESP32 的 LittleFS 已挂载到 /littlefs/ VFS 路径, 可直接用 POSIX 访问.
+ * letter='L' → 路径形如 "L:/littlefs/themes/dark_minimal/gauge_coolant.png"
+ * 配合 LV_USE_PNG=1, lv_image_set_src(obj, "L:/...png") 会自动 fread + lodepng 解.
+ */
+#define LV_USE_FS_POSIX 1
+#define LV_FS_POSIX_LETTER 'L'
+#define LV_FS_POSIX_PATH ""              /* 不加全局前缀, 全 letter:/abs-path 形式 */
+#define LV_FS_POSIX_CACHE_SIZE 0         /* 不缓存 (LVGL image cache 已缓解码后位图) */
+
 #endif /* LV_CONF_H */
