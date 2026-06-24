@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fetch_core.sh — 从 GitHub Releases 拉预编译核心库 (.a + headers)
+# fetch_core.sh — 从 GitHub Releases 拉预编译核心库 (.a + SDK bundle)
 #
 # 用法: ./scripts/fetch_core.sh [version]
 #   不传 version: 拉最新 release
@@ -7,12 +7,13 @@
 #
 # 输出:
 #   lib/raceguard_core/libraceguard-core-<version>-<env>.a
-#   lib/raceguard_core/include/raceguard/*.h
+#   lib/raceguard_core/include/raceguard/*.h     (SDK headers)
+#   lib/raceguard_core/lv_conf.h                 (LVGL build 配置, 跟 .a 强 ABI 一致)
 #
 # 依赖: gh (GitHub CLI), 已通过 brew install gh + gh auth login 配置.
 #
-# ⚠️ v0.0.x: 核心库尚未发布到 Releases, 本脚本暂为占位.
-#            v0.1.0 release 后才可用.
+# 历史: v0.2.0-dev.6 起 tarball 名 headers-*.tar.gz → sdk-bundle-*.tar.gz,
+#       内含 lv_conf.h. 拉更老 release 需手动: gh release download <ver> -p 'headers-*.tar.gz'
 
 set -euo pipefail
 
@@ -65,14 +66,13 @@ fi
 DOWNLOAD_CMD="gh release download ${VERSION} --repo ${REPO}"
 
 cd "${LIB_DIR}"
-${DOWNLOAD_CMD} -p 'libraceguard-core-*.a' -p 'headers-*.tar.gz' -p 'checksums.sha256' --clobber 2>&1 || {
+${DOWNLOAD_CMD} -p 'libraceguard-core-*.a' -p 'sdk-bundle-*.tar.gz' -p 'checksums.sha256' --clobber 2>&1 || {
     echo
     echo "ERROR: 拉取失败. 可能原因:"
-    echo "  1. v0.0.x 阶段核心库还没发布到 Releases (这是预期)"
+    echo "  1. 指定版本不存在或还没发布到 Releases"
     echo "  2. 网络问题或仓库权限问题"
-    echo
-    echo "v0.1.0 release 后本命令才会真正可用. 当前 v0.0.x 阶段只能"
-    echo "查看源码和文档, 不能 build firmware."
+    echo "  3. v0.2.0-dev.5 及更早版本 tarball 名是 headers-*.tar.gz (本脚本只认 sdk-bundle-*),"
+    echo "     如需拉老版本: gh release download <ver> -p 'headers-*.tar.gz' -p 'libraceguard-core-*.a'"
     exit 1
 }
 
@@ -85,12 +85,15 @@ if [[ -f checksums.sha256 ]]; then
     }
 fi
 
-# 解压 headers
-HEADERS_TAR=$(ls headers-*.tar.gz 2>/dev/null | head -1)
-if [[ -n "${HEADERS_TAR}" ]]; then
-    echo "===> 解压 ${HEADERS_TAR} → lib/raceguard_core/include/"
-    mkdir -p include
-    tar -xzf "${HEADERS_TAR}" -C include --strip-components=1
+# 解压 SDK bundle (含 include/raceguard/ + lv_conf.h)
+# tarball 内布局: sdk-bundle-<ver>/{include/raceguard/*.h, lv_conf.h}
+# --strip-components=1 把顶级 sdk-bundle-<ver>/ 削掉, 内容直接落到 LIB_DIR
+BUNDLE_TAR=$(ls sdk-bundle-*.tar.gz 2>/dev/null | head -1)
+if [[ -n "${BUNDLE_TAR}" ]]; then
+    echo "===> 解压 ${BUNDLE_TAR} → ${LIB_DIR}/{include/raceguard/, lv_conf.h}"
+    # 先清旧 include (defensive: 老版本 manifest 改了 header 列表时避免残留)
+    rm -rf include
+    tar -xzf "${BUNDLE_TAR}" --strip-components=1
 fi
 
 echo
