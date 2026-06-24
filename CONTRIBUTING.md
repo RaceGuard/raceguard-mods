@@ -96,16 +96,10 @@ docs(getting-started): 加 erase 最佳实践段
 - 函数命名 `camelCase`, 类型 `PascalCase`, 常量 `kCamelCase` 或 `SCREAMING_SNAKE`
 - 不要写无意义注释 ("// 初始化变量") — 注释解释 *为什么*, 不解释 *做什么*
 
-## 双仓 sync 提示 (维护者用, 贡献者忽略)
-
-部分文件 (UI 框架 / 公开 header / 烘焙工具) 是从主仓 `GTR-BlackBox` rsync 同步过来的.
-PR 改这些文件会被维护者人工挑回主仓 + 下次 release 时同步.
-**车型 / 主题 examples 是 mods 仓原生的, 直接合入即可**.
-
 ## Review 时长
 
 - 车型 / 主题 example: 1 周内 first response
-- UI 框架 / 工具: 2 周内 first response (需要在主仓 cherry-pick + 双仓 build 验证)
+- UI 框架 / 工具: 2 周内 first response
 
 ## 行为准则
 

@@ -190,3 +190,27 @@ v0.2.x 会加 `raceguard::alert::overrideThreshold()` API. 当前需要的话, �
 - BMW 起步模板: [`examples/cars/bmw_template/`](../examples/cars/bmw_template/)
 - 公开 API 文档: [`include/raceguard/car.h`](../include/raceguard/car.h)
 - PID 解析公式 / SAE J1979 参考: 主仓 `docs/reference/PID_REFERENCE.md` (待迁入本仓)
+
+---
+
+## 目录约定 / 命名规则
+
+`examples/cars/<品牌_车型_代号>/` (全小写, 下划线分隔, 含*年代代号*区分同型号不同代 ECU)
+
+```
+✅ nissan_gtr_r35      (R35 一代 GT-R, 07-至今, 不同年份 ECU 差异)
+✅ toyota_supra_a90    (5 代 supra, A90 平台)
+✅ porsche_911_991     (991 platform, 12-19)
+✅ volkswagen_golf_mk7 (Mk7 高尔夫)
+❌ civic               (太泛, 不同代 ECU 不一样)
+```
+
+## 合并标准 (PR Review 时检查)
+
+- ✅ 实车连续测试 ≥30 分钟, 覆盖怠速 + 城市 + 高速三种工况
+- ✅ `kUnsupported[]` 标的 PID 实测真的返回 NO DATA (串口日志为证)
+- ✅ 至少一个 P1xxx 厂家码被 `dtcDescribe()` 处理 (用 OBD 工具人为注入也行)
+- ✅ README 列出: 测试车型 / 年份 / 国别 / 已知限制 / 视频或日志证据链接
+- ✅ 代码风格遵循 SDK 模板 (constexpr buildBitmap / dtcDescribe switch / namespace 命名)
+- ⚠️ 不要把厂家私有协议 (Mode 22 / UDS) 写进 example, 那些需要专门 license / 合规审查
+- ⚠️ 不要 hardcode 激活码 / API key / 公司密钥等敏感信息

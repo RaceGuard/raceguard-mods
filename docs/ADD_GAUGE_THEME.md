@@ -244,3 +244,34 @@ void setup() {
 - 烘焙工具: [`tools/gauge_bakery/`](../tools/gauge_bakery/)
 - 公开 API: [`include/raceguard/ui.h`](../include/raceguard/ui.h) (`namespace theme`)
 - 主题数据源映射 (槽位 → CarData 字段): SDK 内部 `theme_data_sources.cpp`
+
+---
+
+## 目录约定 / 命名规则
+
+```
+data/themes/<风格名>/                                (实际烧 LittleFS 的内容)
+├── manifest.json
+└── gauge_{coolant,oil_temp,rpm,speed,volts,intake,boost,afr}.png
+```
+
+风格名: 全小写, 下划线分隔, 描述视觉感.
+
+```
+✅ dark_minimal        (暗色极简)
+✅ cyberpunk_neon      (赛博朋克霓虹)
+✅ jdm_retro           (JDM 复古机械)
+✅ digital_modern      (现代数字)
+❌ MyTheme             (要全小写)
+❌ classic             (太泛, 多人撞名)
+```
+
+## 合并标准 (PR Review 时检查)
+
+- ✅ **设备实拍** preview-day.png + preview-night.png (车内白天/夜间各拍一张, 不是 mockup)
+- ✅ 480×480 圆屏可读性: 主数字 ≥56px, 副数字 ≥24px
+- ✅ 配色对比度 WCAG AA (≥4.5:1, 用 https://contrast-ratio.com/ 校验)
+- ✅ 8 张表统一风格 (cohesive design language, 不是凑数)
+- ❌ **不用第三方品牌商标** — 不能用真实 Ferrari / Porsche / BMW / GT-R logo (法律风险, 直接 reject)
+- ❌ 不照搬其他商业产品 UI (法律风险)
+- ❌ 不暗藏二维码 / 链接等隐性宣传
