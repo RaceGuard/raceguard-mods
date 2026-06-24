@@ -1,102 +1,160 @@
-# Dark Minimal 主题 (skeleton)
+# Dark Minimal Demo (v0.2.0+ FS 主题示例)
 
-> 状态: 🟡 骨架 (代码全, PNG 资产 placeholder, 自己烘焙)
+> 状态: ✅ 完整流程演示 (PNG 跟默认主题视觉一样, 仅展示 FS 主题打包/上传/切换流程).
+> 你想做真正不同视觉的主题, 自己用 `tools/gauge_bakery/` 烘焙. 见 [`docs/ADD_GAUGE_THEME.md`](../../docs/ADD_GAUGE_THEME.md).
 
-演示 **如何换仪表外观, 不动车型 profile**.
+## v0.2.0+ 架构: 主题包走 LittleFS, 不进 firmware
 
-## 这套 mod 做了什么
+之前 (v0.1.x): 用户主题要写 `gauges.cpp` + 烘焙 .c → 编进 firmware. 一套主题加 ~2MB,
+6MB Flash 主分区放不下默认 + 用户主题. **改不了**.
 
-- 用 `raceguard::ui::registerGauges()` 注册 8 张你自己烘焙的 PNG 仪表底图
-- 替换 SDK 内置的 8 张默认表 (主仓 `lib/raceguard_core/src/ui/led/assets/gauge_*.png`)
-- 数据源 / 阈值 / OBD 协议 *都不变*, 只换视觉
+现在 (v0.2.0+): 主题打包成 PNG + manifest.json → 烧 LittleFS partition (4MB, 独立) →
+设置菜单 / 代码切换. **firmware 永远 ~5MB, 主题装多少都不挤主分区**.
 
-## 包含什么
+## 这个 example 包含什么
 
-| 文件 | 状态 |
-|------|------|
-| `gauges.cpp` | ✅ Def[] 数组 + 注册入口 (引用 `extern const lv_img_dsc_t gauge_dark_*_480` 等) |
-| `assets/gauge_dark_*_480.c` | ❌ **缺** — 自己用 `tools/gauge_bakery` 烘焙生成 |
-| `assets/gauge_dark_*_480.png` | ❌ **缺** — 自己设计 (Figma / Sketch / PS, 480×480 RGB) |
+```
+examples/themes/dark_minimal/
+└── README.md                          ← 你正在读的, 流程文档
 
-## 烘焙流程 (5 步)
+data/themes/dark_minimal/              ← 实际 uploadfs 烧的内容 (mods 仓根)
+├── manifest.json                      ← 主题元数据 (name/author/8 gauge 配置)
+└── gauge_{coolant,oil_temp,rpm,speed,volts,intake,boost,afr}.png  ← 480×480 RGB PNG
+```
 
-### 1. 设计 PNG 底图
-
-8 张 480×480 RGB PNG, 表盘背景 + 刻度 + 数字 (不带指针, 指针由 LVGL 矢量绘制).
-
-视觉风格自由, 但建议:
-- 黑色背景 (#000-#1a1a1a), 车内夜间不刺眼
-- 单色刻度 (#666 或 #aaa), 不喧宾夺主
-- 大数字标 0/max, 中间数字小
-- 红线区 (RPM/COOLANT/OIL_TEMP) 用 #ff3333 醒目但不过亮
-
-参考 `tools/gauge_bakery/assets/` 看主仓默认风格的素材组织.
-
-### 2. 烘焙 PNG → LVGL C 数组
+烘焙产物已经给你了, **不用动手就能验证流程**:
 
 ```bash
 cd raceguard-mods
-./tools/gauge_bakery/bake.py \
-    --input  examples/themes/dark_minimal/assets/ \
-    --output examples/themes/dark_minimal/assets/ \
-    --prefix gauge_dark_ \
-    --size   480
+pio run -e round-led-21 -t uploadfs    # 烧 LittleFS (主题包 ~2MB)
 ```
 
-产物: 每张 PNG 对应一个 `gauge_dark_*_480.c` (含 `lv_img_dsc_t gauge_dark_*_480` 全局变量).
-
-详细烘焙参数见 [`tools/gauge_bakery/README.md`](../../../tools/gauge_bakery/README.md).
-
-### 3. 加入 build
-
-在 mods 仓 `platformio.ini` 的 `[env:round-led-21]` 段, `build_src_filter` 加一行:
-
-```ini
-build_src_filter =
-    +<*>
-    +<../examples/themes/dark_minimal/>
-```
-
-### 4. main.cpp 调注册
+然后在 main.cpp 加一行测试切换 (设置菜单 GUI 推迟到 v0.2.1):
 
 ```cpp
-#include <raceguard/backend.h>
-
-namespace raceguard_examples::dark_minimal {
-    void registerTheme();
-}
-
 void setup() {
     raceguard::log::init(115200);
     raceguard::hal::platform::initHardware();
 
-    raceguard_examples::dark_minimal::registerTheme();  // ← 必须在 startAll 之前
     raceguard::backend::startAll();
+
+    // 切到 FS 主题 dark_minimal, 写 NVS, 重启生效
+    if (raceguard::ui::theme::select("dark_minimal")) {
+        delay(500);
+        ESP.restart();
+    }
 }
 ```
 
-⚠️ **必须** 在 `backend::startAll()` 之前注册 — `startAll` 内部会调 `raceguard::ui::init()` 构造仪表卡片, 那之后注册晚了 SDK 会跳过.
+重启后串口日志:
+```
+[Theme] 已加载 'dark_minimal' (8 张表)
+```
 
-### 5. 烧固件验证
+仪表外观跟默认一样 (因为 PNG 是同款), 但 LVGL 走的是 `L:/littlefs/themes/dark_minimal/gauge_*.png`
+FS 加载路径. 这就是 FS 主题机制跑通的证据.
 
-仪表外观应该变成你的 dark_minimal 风格. 数据 / 长按轮换行为不变.
+## 怎么做你自己的主题包
 
-## 与车型 profile 的关系
+### 1. 设计 8 张 480×480 PNG
 
-主题包 **不动 OBD / DTC / 告警**. 你可以同时用 `examples/cars/<你的车>/` mod 和这个主题:
+自己用 Figma / PS / 任何工具画 8 张. 命名约定 (跟 manifest 对齐):
+```
+gauge_coolant.png   gauge_oil_temp.png  gauge_rpm.png    gauge_speed.png
+gauge_volts.png     gauge_intake.png    gauge_boost.png  gauge_afr.png
+```
+
+设计要点见 [`docs/ADD_GAUGE_THEME.md`](../../docs/ADD_GAUGE_THEME.md) (车内可读性 / 配色对比度 / 角度规范).
+
+### 2. 用 bake_all.py 烘焙 (推荐) 或手写 manifest
+
+#### 用 bake_all (从设计源 PNG 直接出仪表 + manifest)
+
+```bash
+cd raceguard-mods
+./tools/gauge_bakery/bake_all.py \
+    --output-fs cyberpunk_neon \
+    --manifest-author "Your Name" \
+    --manifest-version "1.0.0"
+# 产物: tools/gauge_bakery/output/themes/cyberpunk_neon/
+```
+
+#### 或直接放 8 个 PNG + 手写 manifest
+
+```bash
+mkdir -p data/themes/cyberpunk_neon
+cp my_designed/*.png data/themes/cyberpunk_neon/
+# manifest.json 抄本 example 的, 改 name/author/version 即可
+```
+
+manifest.json 必填字段:
+```json
+{
+  "name": "Cyberpunk Neon",       // 显示给用户的名字
+  "author": "Your Name",
+  "version": "1.0.0",
+  "format": "raceguard-theme-v1", // 固定值, 不能改 (用于版本兼容检查)
+  "screen": "round-led-21",       // 固定值 v0.2.0 只支持圆屏
+  "gauges": [
+    {
+      "name": "COOLANT",          // 必须是 8 个固定槽位之一 (见下)
+      "file": "gauge_coolant.png",
+      "min": 60.0, "max": 140.0,
+      "angle_start_deg": -180.0, "angle_end_deg": 45.0,
+      "fmt": "%.0f°C",
+      "enabled_default": true
+    },
+    ...
+  ]
+}
+```
+
+8 个固定槽位 (跟默认主题对齐, v0.2.0 不支持自定义数据源):
+`COOLANT / OIL_TEMP / RPM / SPEED / VOLTS / INTAKE / BOOST / AFR`
+
+### 3. 把 example 复制到 data/themes/
+
+```bash
+cp -r tools/gauge_bakery/output/themes/cyberpunk_neon data/themes/
+```
+
+### 4. 烧 + 切换
+
+```bash
+pio run -e round-led-21 -t uploadfs
+# main.cpp 内 raceguard::ui::theme::select("cyberpunk_neon") + ESP.restart()
+```
+
+## 装多套共存
+
+`data/themes/` 下可以放多个目录,一次 uploadfs 全装上:
+
+```
+data/themes/
+├── dark_minimal/
+├── cyberpunk_neon/
+└── jdm_retro/
+```
+
+4MB LittleFS 一般够装 ~16 套 (每套 ~2MB). 切换走 `raceguard::ui::theme::select("<id>")`,
+设置菜单 GUI 待 v0.2.1 加.
+
+## 切回默认主题
 
 ```cpp
-void setup() {
-    ...
-    raceguard_examples::nissan_gtr_r35::registerProfile();  // 车型 hint
-    raceguard_examples::dark_minimal::registerTheme();      // 视觉
-    raceguard::backend::startAll();
-}
+raceguard::ui::theme::select("");   // 空 id = 切默认 (.a 内置, 永远兜底)
+ESP.restart();
 ```
 
-## 进阶: 更激进的定制
+## 限制 (v0.2.0)
 
-- 改 8 张表为不同数量 (kGaugeCount 改, 加 / 减 Def)
-- 改 `enabled_default` 让某些表初始不出现 (用户自己长按解锁)
-- 改 `angle_start_deg` / `angle_end_deg` 让指针跑不同角度范围 (配合不同表盘形状)
-- 改 `fmt` 改数字显示格式 (例如 `"%5.1f"` 留 5 字宽)
+- ❌ 设置菜单 GUI 入口暂无 (推迟 v0.2.1, 当前必须代码切换)
+- ❌ 不支持自定义数据源 (槽位固定 8 个, 想加 STFT_B1 等等 v0.1.3+)
+- ❌ 不支持运行时热切 (重启生效, 避免 LVGL 对象重建崩溃)
+- ❌ 只支持 round-led-21 (480×480 圆屏), P4 长条屏 v0.2.x 后期
+
+## 参考
+
+- 教程: [`docs/ADD_GAUGE_THEME.md`](../../docs/ADD_GAUGE_THEME.md)
+- 烘焙工具: [`tools/gauge_bakery/`](../../tools/gauge_bakery/)
+- 公开 API: [`include/raceguard/ui.h`](../../include/raceguard/ui.h) (namespace theme)

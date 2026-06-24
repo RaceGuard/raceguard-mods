@@ -7,7 +7,7 @@ ESP32 + LVGL 车载 OBD 仪表盘 — **任何 OBD-II 车开箱通用**, mods �
 - 🎨 **换仪表外观** — 烘焙自己的 PNG 主题, 不动 OBD 协议层
 - 🌐 **社区共建** — 优质车型 / 主题 PR 欢迎合入
 
-> 状态: **v0.1.2-dev** — 双仓 build OK, examples 完整, public release 准备中.
+> 状态: **v0.2.0-dev** — 主题包走 LittleFS (不挤 Flash); examples + 治理文档完整; public release ready.
 
 ---
 
@@ -50,7 +50,7 @@ ESP32 + LVGL 车载 OBD 仪表盘 — **任何 OBD-II 车开箱通用**, mods �
 ```bash
 git clone https://github.com/RaceGuard/raceguard-mods.git
 cd raceguard-mods
-./scripts/fetch_core.sh v0.1.2-dev     # 拉预编译 .a (~13MB) + headers + sha256
+./scripts/fetch_core.sh v0.2.0-dev     # 拉预编译 .a (~13MB) + headers + sha256
 pio run -e round-led-21                # 编 firmware
 pio run -e round-led-21 -t upload      # 烧到 ESP32
 ```
@@ -116,9 +116,10 @@ scripts/
 - [x] **v0.1.0-dev** — build 配置 + 核心库首发 (本地 .a)
 - [x] **v0.1.1-dev** — 双仓 main.cpp 1:1 + LED UI 入 .a + DEMO/ACTIVATED 双模
 - [x] **v0.1.2-dev** — `registerProfile` 真接通 + examples (GT-R / BMW / Dark) + 文档
-- [ ] **v0.1.3** — 追加式 API (`addGauge` / `addManufacturerPid`)
-- [ ] **v0.2.0** — 自定义 GaugeCard 子类指南 + 完整 SDK 文档
-- [ ] **v0.3.0** — P4 长条屏完整支持
+- [x] **v0.2.0-dev** — 主题包走 LittleFS (不挤 Flash), `theme::list/select/current` API, dark_minimal demo
+- [ ] **v0.2.1** — 设置菜单 Theme 子页 GUI (当前 v0.2.0 须代码切换)
+- [ ] **v0.1.3 / v0.3.0** — 追加式 API + 自定义数据源 (任意 CarData 字段做主题)
+- [ ] **v0.4.0** — P4 长条屏完整支持
 - [ ] **v1.0.0** — 稳定 API 承诺
 
 ## 贡献

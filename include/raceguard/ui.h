@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 
 namespace raceguard::ui {
 
@@ -69,5 +70,35 @@ bool isGaugeEnabled(uint8_t idx);
 // 注: 这个函数声明用 void* 隐藏 Def 类型 (LVGL 类型依赖 mods 仓 lvgl.h 已 install).
 //     调用方传 const UI::PngGaugeCard::Def* 强制 cast 为 void* 即可, 内部还原.
 void registerGauges(const void* defs, uint8_t count);
+
+// ============ FS 主题包 (v0.2.0+) ============
+// 用户烘焙的主题包放 LittleFS (/littlefs/themes/<id>/), 含 manifest.json + 8 张 PNG.
+// 设置菜单 Theme 子页让用户选, 切换后重启生效.
+// 默认主题(.a 内置) 不依赖 FS, 总是兜底.
+//
+// 烘焙生成主题: tools/gauge_bakery/bake_all.py --output-fs <id>
+// 上传到设备:   pio run -e round-led-21 -t uploadfs
+
+namespace theme {
+
+struct Info {
+    char name[32];     // manifest "name", 显示给用户
+    char author[32];
+    char version[16];
+    char id[32];       // 目录名 = /littlefs/themes/<id>/, 用于 select()
+};
+
+// 列出 /littlefs/themes/* 下所有合法主题 (manifest.json 校验通过).
+// out 至少 cap 项 storage, 返回实际写入数 (≤ cap).
+size_t list(Info* out, size_t cap);
+
+// 当前激活主题 id. 空串 = default (内置).
+const char* current();
+
+// 切换主题: 写 NVS, 重启后生效. 立即不切换 (避免 runtime 重建 LVGL 对象).
+// 返回 true 成功写入. 调用方应提示用户 "Restart to apply".
+bool select(const char* id);
+
+}  // namespace theme
 
 }  // namespace raceguard::ui

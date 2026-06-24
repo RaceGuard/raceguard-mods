@@ -113,10 +113,10 @@ git clone https://github.com/RaceGuard/raceguard-mods.git
 cd raceguard-mods
 
 # 2. 拉预编译核心库 (.a + headers, ~13MB, 从 GitHub Release 下载)
-./scripts/fetch_core.sh v0.1.2-dev
+./scripts/fetch_core.sh v0.2.0-dev
 #   这步会自动:
-#     - 下载 libraceguard-core-0.1.2-dev-round-led-21.a (13MB 闭源核心)
-#     - 下载 headers-0.1.2-dev.tar.gz (8KB 公开 API headers)
+#     - 下载 libraceguard-core-0.2.0-dev-round-led-21.a (13MB 闭源核心)
+#     - 下载 headers-0.2.0-dev.tar.gz (8KB 公开 API headers)
 #     - 下载 checksums.sha256
 #     - SHA-256 校验防损坏
 #     - 解压 headers 到 lib/raceguard_core/include/
@@ -129,12 +129,21 @@ pio run -e round-led-21
 
 成功标志:
 ```
-RAM:   [===       ]  27.7% (used 90908 bytes from 327680 bytes)
-Flash: [========  ]  79.1% (used 4977161 bytes from 6291456 bytes)
-========================= [SUCCESS] Took 43.29 seconds ===========
+RAM:   [===       ]  28.2% (used 92324 bytes from 327680 bytes)
+Flash: [========  ]  79.2% (used 4982689 bytes from 6291456 bytes)
+========================= [SUCCESS] Took 21.95 seconds ===========
 ```
 
 build 完后 firmware 在 `.pio/build/round-led-21/firmware.bin`. 没硬件就先到这里, **你已经成功了**.
+
+### (v0.2.0+) 4. 烧 LittleFS 主题包 (可选, 不烧也能用默认主题)
+
+```bash
+pio run -e round-led-21 -t uploadfs
+```
+
+把 `data/themes/` 下所有主题包 (本仓自带 `dark_minimal`) 烧到 4MB LittleFS 分区. firmware
+partition 不动 — 主题切换不需要重 build firmware. 详见 [`ADD_GAUGE_THEME.md`](ADD_GAUGE_THEME.md).
 
 ---
 

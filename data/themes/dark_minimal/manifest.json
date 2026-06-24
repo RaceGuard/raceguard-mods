@@ -1,0 +1,89 @@
+{
+  "name": "Dark Minimal Demo",
+  "author": "RaceGuard Project",
+  "version": "1.0.0",
+  "format": "raceguard-theme-v1",
+  "screen": "round-led-21",
+  "gauges": [
+    {
+      "name": "COOLANT",
+      "file": "gauge_coolant.png",
+      "min": 60.0,
+      "max": 140.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.0f°C",
+      "enabled_default": true
+    },
+    {
+      "name": "OIL_TEMP",
+      "file": "gauge_oil_temp.png",
+      "min": 60.0,
+      "max": 150.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.0f°C",
+      "enabled_default": false
+    },
+    {
+      "name": "RPM",
+      "file": "gauge_rpm.png",
+      "min": 0.0,
+      "max": 8000.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.0f",
+      "enabled_default": true
+    },
+    {
+      "name": "SPEED",
+      "file": "gauge_speed.png",
+      "min": 0.0,
+      "max": 340.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.0f",
+      "enabled_default": true
+    },
+    {
+      "name": "VOLTS",
+      "file": "gauge_volts.png",
+      "min": 10.0,
+      "max": 16.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.1fV",
+      "enabled_default": true
+    },
+    {
+      "name": "INTAKE",
+      "file": "gauge_intake.png",
+      "min": -20.0,
+      "max": 80.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.0f°C",
+      "enabled_default": true
+    },
+    {
+      "name": "BOOST",
+      "file": "gauge_boost.png",
+      "min": -1.0,
+      "max": 2.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.1f",
+      "enabled_default": false
+    },
+    {
+      "name": "AFR",
+      "file": "gauge_afr.png",
+      "min": 10.0,
+      "max": 18.0,
+      "angle_start_deg": -180.0,
+      "angle_end_deg": 45.0,
+      "fmt": "%.1f",
+      "enabled_default": true
+    }
+  ]
+}

@@ -110,9 +110,14 @@ void PngGaugeCard::createObjects(lv_obj_t* parent) {
     val_label_bottom_y_ = (int16_t)(354.0f * scale);
 
     // ── 底图层 ──
+    // 数据源优先级: path (FS 主题) > image (默认主题 / 老 API). LVGL 同一 set_src API,
+    // 传 const char* 时按路径走 fs_drv → 解 PNG; 传 const lv_image_dsc_t* 时直接用内置.
     const Def* d = currentDef();
     bg_img_ = lv_image_create(container_);
-    if (d) lv_image_set_src(bg_img_, d->image);
+    if (d) {
+        if (d->path) lv_image_set_src(bg_img_, d->path);
+        else if (d->image) lv_image_set_src(bg_img_, d->image);
+    }
     lv_obj_align(bg_img_, LV_ALIGN_CENTER, 0, 0);
     lv_obj_clear_flag(bg_img_, LV_FLAGS(LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE));
 
@@ -281,7 +286,8 @@ void PngGaugeCard::switchTo(uint8_t idx) {
     cur_idx_ = idx;
     const Def* d = currentDef();
     if (bg_img_ && d) {
-        lv_image_set_src(bg_img_, d->image);
+        if (d->path) lv_image_set_src(bg_img_, d->path);
+        else if (d->image) lv_image_set_src(bg_img_, d->image);
     }
     needle_smooth_ = 0.0f;
     updateNeedle(0.0f);

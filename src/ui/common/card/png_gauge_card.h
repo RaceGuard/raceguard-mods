@@ -27,7 +27,7 @@ public:
     /** 单张仪表的描述 */
     struct Def {
         const char*           name;             // "COOLANT"
-        const lv_image_dsc_t* image;            // 底图（gauges/gauge_*.c 提供，LVGL 8 下 alias 到 lv_img_dsc_t）
+        const lv_image_dsc_t* image;            // 默认主题底图 (gauges/gauge_*.c 提供, LVGL 8 下 alias 到 lv_img_dsc_t)
         float                 value_min;
         float                 value_max;
         // 钟表坐标：12 点 = 0°，顺时针正。烘焙脚本默认 -180 → +45
@@ -37,6 +37,11 @@ public:
         bool  (*has_value)(const CarData&);     // 检查字段是否有效
         const char*           fmt;              // 数值格式串，如 "%.0f"
         bool                  enabled_default;  // 是否参与长按轮换
+
+        // v0.2.0+ FS 主题: 如果非空, LVGL 运行时按路径 fread + PNG 解码;
+        // 默认 nullptr 表示走 image 内置 lv_img_dsc_t (旧数组初始化零改动).
+        // 例: "L:/littlefs/themes/dark_minimal/gauge_coolant.png"
+        const char*           path = nullptr;
     };
 
     PngGaugeCard(const Def* defs, uint8_t count, uint8_t default_idx);
