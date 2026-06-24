@@ -1,0 +1,12 @@
+# CODEOWNERS — 自动 @ review 候选
+# 文档: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+#
+# 当前 v0.2.0-dev.3: 只有 @shanlb 一人维护, 默认全包.
+# 后续有副 maintainer 时按目录分:
+#   examples/cars/   @car_mod_curator
+#   examples/themes/ @theme_mod_curator
+#   src/ui/common/   @ui_lead
+#   tools/           @tooling_lead
+
+# 默认 owner — 所有 PR 自动 @ 我 review
+*  @shanlb

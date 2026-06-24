@@ -1,0 +1,66 @@
+# 文档: https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+#
+# GitHub 在 release create 时按 PR label 自动分类 commits 进 release notes.
+# 维护者给每个 PR 加合适的 label (feat/fix/docs/chore/breaking) 即可自动归档.
+#
+# Label 跟 commit type 对齐 (CONTRIBUTING.md Conventional Commits 段):
+#   feat / enhancement      → ✨ Features
+#   fix / bug               → 🐛 Bug Fixes
+#   docs / documentation    → 📚 Documentation
+#   chore / dependencies    → 🔧 Chores
+#   breaking                → ⚠️ Breaking Changes
+#
+# 不在以上 label 的 PR 进 "Other Changes" 兜底.
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release    # 给"不写进 release notes"的 PR 加这个 label
+
+  categories:
+    - title: ⚠️ Breaking Changes
+      labels:
+        - breaking
+        - breaking-change
+
+    - title: ✨ Features
+      labels:
+        - feat
+        - feature
+        - enhancement
+
+    - title: 🐛 Bug Fixes
+      labels:
+        - fix
+        - bug
+        - bugfix
+
+    - title: 📚 Documentation
+      labels:
+        - docs
+        - documentation
+
+    - title: 🔧 Chores
+      labels:
+        - chore
+        - dependencies
+        - refactor
+
+    - title: 🚗 New Car Profiles
+      labels:
+        - cars
+        - new-car
+
+    - title: 🎨 New Themes
+      labels:
+        - themes
+        - new-theme
+
+    - title: 🔬 Tests
+      labels:
+        - test
+        - tests
+
+    - title: Other Changes
+      labels:
+        - "*"        # 兜底所有未匹配的 PR

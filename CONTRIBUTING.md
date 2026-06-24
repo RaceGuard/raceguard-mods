@@ -16,16 +16,53 @@
 ## 提交流程
 
 1. **Fork 本仓库** 到你的账号
-2. **创建分支**: `git checkout -b feat/honda_civic_fk7`
-3. **写代码 + 实测验证** (详见下文 ↓)
-4. **Commit** — 中英文都行, 第一行简短描述, 例:
-   ```
-   feat(cars): add Honda Civic FK7 profile (实车验证)
-   ```
-5. **Push + PR** 到 `RaceGuard/raceguard-mods` 的 `main` 分支
+2. **创建分支** (命名见下方 ↓ Branch / Commit 约定)
+3. **写代码 + 实测验证** (详见下文 ↓ 验证要求)
+4. **Commit** — 中英文都行, 第一行简短描述, 见下方 commit 约定
+5. **Push + PR** 到 `RaceGuard/raceguard-mods` 的 `main` 分支. CI 会自动跑 build,
+   失败 (绿勾变红 X) 的 PR 不能 merge.
 6. PR description 必须包含:
    - 实车 / 实设备验证证据 (照片 / 日志 / 视频片段)
    - 已知限制 / 未覆盖的工况
+
+## Branch / Commit 约定
+
+### Branch 命名 (按 PR 类型)
+
+```
+feat/cars/<品牌_车型>      ← 新车型 mod  (e.g. feat/cars/honda_civic_fk7)
+feat/themes/<风格名>       ← 新主题包    (e.g. feat/themes/cyberpunk_neon)
+feat/sdk/<feature>         ← SDK 新功能 (改 src/ui/common/ 等公共层)
+fix/<scope>/<short>        ← bug fix    (e.g. fix/theme/path-prefix)
+docs/<topic>               ← 纯文档     (e.g. docs/add-car-profile)
+chore/<task>               ← 维护任务   (e.g. chore/bump-deps)
+```
+
+### Commit message 约定 (Conventional Commits)
+
+第一行格式: `<type>(<scope>): <短描述>`
+
+- type: `feat` / `fix` / `docs` / `chore` / `refactor` / `test`
+- scope: 跟 branch 的二级一致 (`cars` / `themes` / `sdk` / `tools`...)
+
+例:
+```
+feat(cars): add Honda Civic FK7 profile (实车验证 50 min)
+fix(theme): manifest path 双前缀 bug (修 LittleFS.open 误带 /littlefs/)
+docs(getting-started): 加 erase 最佳实践段
+```
+
+第一行 ≤ 72 字符. body (可选) 解释 *为什么* 改, 不解释 *做什么* (diff 已说明).
+
+### Merge 策略
+
+维护者合并 PR 时默认用 **Squash merge**, 把分支多个 commit 压成一个进 main:
+- main 历史干净 (1 PR = 1 commit, 跟 release notes 一致)
+- 你 fork 上的细节 commit (typo fix / WIP) 不污染主仓
+- Squash 后的 commit message 用你 PR title (跟 branch 命名一致就很自然)
+
+特殊情况 (大 refactor 想保留每步细节): PR description 注明 "请用 Rebase merge",
+维护者 case by case 决定.
 
 ## 验证要求
 
