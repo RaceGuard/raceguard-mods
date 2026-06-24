@@ -1,0 +1,53 @@
+RaceGuard Mods
+Copyright (c) 2026 RaceGuard Project Contributors
+
+This product includes software developed by the RaceGuard Project, licensed
+under the Apache License, Version 2.0 (see LICENSE file).
+
+================================================================================
+THIRD-PARTY / PROPRIETARY COMPONENTS
+================================================================================
+
+This repository's open-source code (everything in src/, include/, examples/,
+tools/, scripts/) is licensed under Apache 2.0.
+
+However, building a working firmware requires linking against the proprietary
+binary `libraceguard-core-<env>.a`, which is NOT covered by the Apache 2.0
+license of this repository. The core library is distributed separately via
+GitHub Releases (https://github.com/RaceGuard/raceguard-mods/releases) and
+is subject to its own license terms:
+
+  - You MAY use the .a binary to build firmware for ESP32 boards you own.
+  - You MAY redistribute compiled firmware images (.bin) for non-commercial use.
+  - You MAY NOT decompile, reverse-engineer, or extract source from the .a.
+  - You MAY NOT redistribute the .a file standalone or as part of another SDK.
+  - Commercial use (selling devices that include the firmware) requires a
+    separate license; see https://raceguard.cn or contact the project owners.
+
+The activation system (raceguard::license::* APIs) is the gate between two
+modes:
+
+  - DEMO     — works on any unmodified ESP32. UI animations + mock data only.
+               OBD / SD / activation-restricted features are disabled.
+  - ACTIVATED — requires a valid activation code (16-char HMAC) bound to the
+                chip ID. Either pre-burned to NVS at factory, or entered
+                through the in-device WiFi AP setup flow.
+
+================================================================================
+INCLUDED THIRD-PARTY OPEN-SOURCE COMPONENTS
+================================================================================
+
+This repository's open-source portion (src/, include/, etc.) may include or
+depend on the following third-party projects (full licenses in their respective
+package directories or LICENSE files):
+
+  - LVGL (MIT) — Light and Versatile Graphics Library
+  - PlatformIO (Apache 2.0) — build / dependency management
+  - Arduino-ESP32 (LGPL-2.1) — framework for ESP32 boards
+  - Adafruit GFX (BSD-2-Clause) — graphics primitives for non-LVGL pages
+  - Various ESP-IDF components (Apache 2.0) — underlying drivers
+
+================================================================================
+
+For questions about licensing, please open an issue:
+  https://github.com/RaceGuard/raceguard-mods/issues
