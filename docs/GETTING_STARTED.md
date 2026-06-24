@@ -22,13 +22,13 @@
 - Git
 - Python 3.10+ (3.11 推荐)
 - PlatformIO Core (CLI 版, 不需要 IDE)
-- gh CLI (拉 release 用; 仓库 public 后**可选**, 直接 `curl` 也行)
+- curl + sha256sum + tar (Mac/Linux 系统自带, 不用单独装)
 
 ### 操作系统
 
 - ✅ **macOS** (Intel / Apple Silicon 都行) — 主力开发环境
 - ✅ **Linux** (Ubuntu 22.04+ 测过)
-- 🟡 **Windows** — WSL2 + Ubuntu 走 Linux 路径最稳; 原生 PowerShell 也能但要自己装 `gh`、`make`、串口驱动
+- 🟡 **Windows** — WSL2 + Ubuntu 走 Linux 路径最稳; 原生 PowerShell 也能但要自己装 `curl`、`make`、串口驱动
 
 ---
 
@@ -40,8 +40,8 @@
 # Homebrew (如果没装)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# git / Python / gh CLI
-brew install git python@3.11 gh
+# git / Python (curl/tar 系统自带, sha256sum 用系统 shasum 即可)
+brew install git python@3.11
 
 # PlatformIO Core (用独立 venv, 不污染系统 Python)
 python3 -m venv ~/.platformio/penv
@@ -54,19 +54,12 @@ source ~/.zshrc
 # 验证
 pio --version    # 应该输出 PlatformIO Core, version 6.x.x
 git --version
-gh --version
 ```
 
 ### Linux (Ubuntu)
 
 ```bash
-sudo apt update && sudo apt install -y git python3-venv python3-pip curl
-
-# gh CLI (官方源)
-curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list
-sudo apt update && sudo apt install gh
+sudo apt update && sudo apt install -y git python3-venv python3-pip curl coreutils tar
 
 # PIO
 python3 -m venv ~/.platformio/penv
@@ -92,16 +85,17 @@ wsl --install -d Ubuntu-22.04
 
 然后在 WSL Ubuntu 内执行上面 Linux 步骤. 烧机时 USB 设备需要用 `usbipd-win` attach 到 WSL — 见 [Microsoft 官方指南](https://learn.microsoft.com/en-us/windows/wsl/connect-usb).
 
-### gh 登录 (仓库当前是 public, **可选**)
+### (可选) gh CLI
 
-仅当你想用 `gh` CLI 操作仓库 (提 issue/PR 等) 才需要:
+`fetch_core.sh` 走匿名 HTTPS 不需要 gh. 仅当你想用 `gh` 提 issue / PR 才需要装:
 
 ```bash
-gh auth login
-# 选 GitHub.com → HTTPS → Web browser → 复制 device code → 浏览器粘贴授权
-```
+# macOS
+brew install gh && gh auth login
 
-仓库已 public 的话, `fetch_core.sh` 不需要 `gh` 登录, 用 `gh release download` 走匿名下载.
+# Linux
+sudo apt install gh && gh auth login
+```
 
 ---
 
@@ -112,14 +106,14 @@ gh auth login
 git clone https://github.com/RaceGuard/raceguard-mods.git
 cd raceguard-mods
 
-# 2. 拉预编译核心库 (.a + headers, ~13MB, 从 GitHub Release 下载)
-./scripts/fetch_core.sh v0.2.0-dev
-#   这步会自动:
-#     - 下载 libraceguard-core-0.2.0-dev-round-led-21.a (13MB 闭源核心)
-#     - 下载 headers-0.2.0-dev.tar.gz (8KB 公开 API headers)
-#     - 下载 checksums.sha256
+# 2. 拉预编译核心库 (.a + SDK bundle, ~14MB, 从 GitHub Release 下载)
+./scripts/fetch_core.sh
+#   不传版本号会自动读 CORE_VERSION 文件 (本仓 pin 的版本). 自动:
+#     - curl 下载 libraceguard-core-<ver>-round-led-21.a (14MB 闭源核心)
+#     - curl 下载 sdk-bundle-<ver>.tar.gz (10KB headers + lv_conf.h)
+#     - curl 下载 checksums.sha256
 #     - SHA-256 校验防损坏
-#     - 解压 headers 到 lib/raceguard_core/include/
+#     - 解压到 lib/raceguard_core/{include/raceguard/, lv_conf.h}
 
 # 3. 编 firmware
 pio run -e round-led-21
@@ -229,11 +223,11 @@ Platform: Waveshare-ESP32-S3-2.1
 - macOS / Linux: PATH 没加进去. `echo $PATH` 看有没有 `~/.platformio/penv/bin`.
 - 临时解法: 用绝对路径 `~/.platformio/penv/bin/pio`
 
-### `./scripts/fetch_core.sh: ERROR: 拉取失败`
+### `./scripts/fetch_core.sh: ERROR: 下载 ... 失败`
 
-- 网络问题: GitHub Releases 在国内有时慢, 可以挂代理或换个时段
-- 仓库还是 private (历史遗留): 跑 `gh auth login` 后重试
+- 网络问题: GitHub Releases 在国内有时慢, 可以挂代理或换个时段. 脚本已带 `--retry 3` 兜底 SSL 偶发, 还失败重跑一次
 - 版本号写错: 看 [releases 页面](https://github.com/RaceGuard/raceguard-mods/releases) 确认 tag 拼写
+- 老版本拉不到: 本脚本只支持 `v0.2.0-dev.6+` (引入了 sdk-bundle 格式), 老 release 需手拉
 
 ### `pio run` 卡在 "Installing platform" 很久
 

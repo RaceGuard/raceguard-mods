@@ -1,42 +1,30 @@
-// active_mods.cpp — 启用 mod 的集中注册点
+// active_mods.cpp — 启用 mod 的集中注册点 (由 ./scripts/enable_mod.sh 维护)
 //
-// 用户加 car / theme mod 时, 在这里取消注释对应行启用.
-// main.cpp 自动调 register_active_mods() (在 backend::startAll() 之前), 你不要改 main.cpp.
+// 推荐流程:
+//   ./scripts/new_car.sh honda_civic_fk7        # 生成 examples/cars/honda_civic_fk7/
+//   ./scripts/enable_mod.sh cars honda_civic_fk7 # 一条命令改 3 处 (本文件 + platformio.ini)
+//   ./scripts/flash_all.sh                      # 烧 firmware + LittleFS
+//
+// 关闭全部 mod 回 stock 通用 OBD-II:
+//   ./scripts/enable_mod.sh disable
 //
 // 时序保证:
-//   register_active_mods()  ← 这里 (车型 profile + 主题 register)
-//   backend::startAll()     ← 接住注册好的 profile, OBDManager::init / theme::reloadFromNVS
+//   main.cpp setup() → register_active_mods() (这里) → backend::startAll()
+//   backend 接住注册好的 profile, OBDManager::init / theme::reloadFromNVS 走预设
 //
-// 例: 启用 Nissan GT-R R35 车型 mod + Dark Minimal 主题
-//   1. ./scripts/new_car.sh ...    OR  确认 examples/cars/nissan_gtr_r35 已编进 build_src_filter
-//   2. 取消下面对应行的注释
-//   3. pio run -e round-led-21 -t upload
+// 主题 mod 不需要在这注册. v0.2.0+ 走 LittleFS + raceguard::ui::theme::select(...),
+// uploadfs 后从设置菜单切.
 
 #include "active_mods.h"
 
-// ============ 车型 mod forward declaration ============
-//
-// 把你 enable 的车型 mod namespace 声明在这, 跟下面 register_active_mods() body 里
-// 取消注释的 register 调用配对.
+// ============ AUTO-GENERATED 块 ============
+// >>> ENABLE_MOD 标记之间的内容由 ./scripts/enable_mod.sh 重写, 不要手改.
+// 标记本身不要删, 删了脚本定位不到.
 
-// namespace raceguard_examples::nissan_gtr_r35 { void registerProfile(); }
-// namespace raceguard_examples::bmw_template   { void registerProfile(); void enableExtraGauges(); }
-// namespace raceguard_examples::honda_civic_fk7 { void registerProfile(); }  // 你新加的车型 mod
-
-// ============ 主题 mod forward declaration (覆盖默认主题, 一般用 FS 主题不需要这) ============
-
-// 注: v0.2.0+ 推荐用 raceguard::ui::theme::select(...) + LittleFS 切主题, 不需要在这注册.
-// 这里的 registerTheme 是老式 registerGauges 覆盖路径, 给特殊需求用.
-
-// ============ 注册 (用户编辑, 取消注释对应行) ============
+// >>> ENABLE_MOD:DECL_BEGIN
+// <<< ENABLE_MOD:DECL_END
 
 void register_active_mods() {
-    // 车型 mod (一次只能 enable 一个, 后注册的覆盖前面):
-    // raceguard_examples::nissan_gtr_r35::registerProfile();
-    // raceguard_examples::bmw_template::registerProfile();
-
-    // 车型 mod 的额外配置 (启用默认 disabled 的仪表表等):
-    // raceguard_examples::bmw_template::enableExtraGauges();   // 必须在 backend::startAll() 之后调
-
-    // (空 — 默认不启用任何 mod, 跑 stock 通用 OBD-II)
+    // >>> ENABLE_MOD:CALL_BEGIN
+    // <<< ENABLE_MOD:CALL_END
 }
