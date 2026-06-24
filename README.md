@@ -45,13 +45,17 @@ ESP32 + LVGL 车载 OBD 仪表盘 — **任何 OBD-II 车开箱通用**, mods �
 
 ## 快速上手
 
+**已有 PIO + ESP32 开发环境的话**:
+
 ```bash
 git clone https://github.com/RaceGuard/raceguard-mods.git
 cd raceguard-mods
-./scripts/fetch_core.sh                # 拉预编译 .a 到 lib/raceguard_core/
+./scripts/fetch_core.sh v0.1.2-dev     # 拉预编译 .a (~13MB) + headers + sha256
 pio run -e round-led-21                # 编 firmware
 pio run -e round-led-21 -t upload      # 烧到 ESP32
 ```
+
+**第一次接触 ESP32 / PIO?** 看 [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) — 从装 brew/PIO 开始,涵盖 Mac/Linux/Windows,常见坑都列了.
 
 烧完后:
 - 通用 ESP32 → DEMO 模式 (mock 数据驱动 UI, 演示用)
