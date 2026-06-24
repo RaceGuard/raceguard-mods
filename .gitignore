@@ -24,6 +24,11 @@ lib/raceguard_core/include/
 lib/raceguard_core/headers-*.tar.gz
 lib/raceguard_core/checksums.sha256
 
+# v0.2.0-dev.3+ headers 唯一来源 = fetch_core 拉的 lib/raceguard_core/include/.
+# 避免 sync 跟 release tarball 双源漂移 — 本仓 include/raceguard/ 不再入 git.
+# 不慎手动 cp 进来不会被 commit. fetch_core 后用 lib/raceguard_core/include/ 一份权威 header.
+include/raceguard/
+
 # ============ 烘焙工具产物 (设计师本地素材, 不入仓) ============
 tools/gauge_bakery/output/
 tools/gauge_bakery/*.png

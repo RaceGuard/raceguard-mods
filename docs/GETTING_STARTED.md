@@ -233,6 +233,17 @@ Platform: Waveshare-ESP32-S3-2.1
 - 检查 `ls lib/raceguard_core/*.a`, 应该有且只有一个 `libraceguard-core-<version>-round-led-21.a`
 - 多个 `.a` 会让 `link_core.py` glob 匹配多个, 链接顺序不确定 → 删掉旧版
 
+### IDE 报红 / 找不到 `raceguard/xxx.h`
+
+- 现象: 全新 clone 后 VSCode / clangd 报 `#include <raceguard/ui.h> not found`
+- 根因: v0.2.0-dev.3+ headers **不入 git**, fetch_core 是唯一权威来源
+- 修法:
+  ```bash
+  ./scripts/fetch_core.sh v0.2.0-dev.3   # 拉 .a + headers tarball, 解压到 lib/raceguard_core/include/
+  ```
+  然后 IDE reload 索引. headers 在 `lib/raceguard_core/include/raceguard/`,
+  `platformio.ini` 已配 `-Ilib/raceguard_core/include` 编译器能找到
+
 ### 烧完串口没输出 / 屏幕黑
 
 - USB 线是不是仅充电的 (没数据线)? 换一根
