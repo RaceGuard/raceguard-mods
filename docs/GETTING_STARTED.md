@@ -253,6 +253,58 @@ ls /dev/ttyUSB* /dev/ttyACM*    # Linux
 
 如果没列出任何设备, 是 USB 没识别. 换线 / 换 USB 口 / 重插.
 
+### erase 后激活码 / 主题 / 自定义 logo 都丢了
+
+**根因**: `pio run -t erase` / `esptool erase_flash` 是 **核武器**, 擦整片 flash 含
+所有 partition (NVS / LittleFS / firmware). NVS 里存激活码 + 主题选择,LittleFS 里存
+主题包 + 自定义 logo,**都会丢**.
+
+**避免方法 — 按需精细 erase** (esp32-s3, 看 `partitions_16mb_lfs.csv` 确认 offset):
+
+```bash
+# 只擦 LittleFS partition (清主题包 + 自定义 logo, 保留激活码)
+esptool.py --chip esp32s3 erase_region 0xC10000 0x3F0000
+
+# 只擦 NVS (清激活码 + 主题选择 + 各种偏好, 保留 firmware + LittleFS)
+esptool.py --chip esp32s3 erase_region 0x9000 0x5000
+
+# 完全不 erase, 仅重烧 firmware (PIO 默认行为)
+pio run -t upload    # 只写 0x10000~0x610000 那段 app0, 别的 partition 不动
+```
+
+**激活码持久化** (v0.2.0-dev.2+):
+
+激活成功时 SDK 会**同时**写 NVS + SD 卡 `/license.txt` (如果 SD 卡可用). 后续即使
+`pio run -t erase` 清了 NVS, 启动时 `init()` 会从 SD 卡 fallback 读回来 + 自动重写 NVS,
+**无感恢复**. 你完全不需要再走 WiFi 激活页.
+
+确认 SD 卡里有 license.txt:
+```bash
+# 把 SD 卡插读卡器拔出来电脑看
+cat /Volumes/<SD_VOLUME>/license.txt
+# 期望看到:
+# GTR-BLACKBOX-LICENSE
+# CHIP:AABBCCDDEEFF
+# KEY:3f7a9b2c...
+```
+
+**没插 SD 卡** 的设备: 持久化降级到 NVS only, erase 后必须重激活. 建议至少插一块
+廉价 microSD (¥10), 一劳永逸.
+
+### 我想清主题但不想擦激活码
+
+```cpp
+// main.cpp 加一段代码 (跑一次后删除)
+Preferences p;
+p.begin("rg_theme", false);
+p.clear();   // 只清这个 namespace
+p.end();
+ESP.restart();
+```
+
+烧 + 跑一次后, NVS 里 `rg_theme/current` 被清, 启动回默认主题. NVS 里别的 namespace
+(如 `gtr_lic`/`code` 激活码) 不动.
+
 ### Mac 上提示 "无法验证开发者" 之类
 
 打开 系统设置 → 隐私与安全性 → 滚到底 → 允许 esptool / PlatformIO 之类的工具.
