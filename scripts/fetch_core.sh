@@ -36,11 +36,18 @@ fi
 echo "===> Fetching raceguard_core from ${REPO} (release: ${VERSION})"
 
 # 拉 .a 文件和 headers
+# v0.2.0-dev.3+: latest 走 release list 取最新 (含 prerelease) — GitHub "latest" 标识只算
+# 非 prerelease release, 开发期所有 release 都 prerelease 会让裸 gh release download 报 "not found".
 if [[ "${VERSION}" == "latest" ]]; then
-    DOWNLOAD_CMD="gh release download --repo ${REPO}"
-else
-    DOWNLOAD_CMD="gh release download ${VERSION} --repo ${REPO}"
+    LATEST_TAG=$(gh release list --repo "${REPO}" --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null)
+    if [[ -z "${LATEST_TAG}" ]]; then
+        echo "ERROR: ${REPO} 没有任何 release"
+        exit 1
+    fi
+    echo "===> Resolved 'latest' → ${LATEST_TAG} (含 prerelease)"
+    VERSION="${LATEST_TAG}"
 fi
+DOWNLOAD_CMD="gh release download ${VERSION} --repo ${REPO}"
 
 cd "${LIB_DIR}"
 ${DOWNLOAD_CMD} -p 'libraceguard-core-*.a' -p 'headers-*.tar.gz' -p 'checksums.sha256' --clobber 2>&1 || {
