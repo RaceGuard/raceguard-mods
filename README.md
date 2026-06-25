@@ -9,37 +9,11 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 ---
 
-## 📥 下载固件 (不写代码, 直接烧机)
-
-| 版本 | 日期 | 烧机固件 (4.8 MB) | 更新摘要 |
-|------|------|------------------|---------|
-| **v0.2.0-dev.8** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.0-dev.8-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.8/raceguard-firmware-v0.2.0-dev.8-led-21.bin) | .a strip 防反编译 (14M → 4.3M) |
-| v0.2.0-dev.7 | 2026-06-25 | [📦 v0.2.0-dev.7](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.7/raceguard-firmware-v0.2.0-dev.7-led-21.bin) | adapter 加 license gate (堵开放层绕过激活) + BUILD_INFO |
-| v0.2.0-dev.6 | 2026-06-25 | [📦 v0.2.0-dev.6](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.6/raceguard-firmware-v0.2.0-dev.6-led-21.bin) | lv_conf.h 进 SDK bundle, 砍双源漂移 |
-| v0.2.0-dev.5 | 2026-06-24 | [📦 v0.2.0-dev.5](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.5/raceguard-firmware-v0.2.0-dev.5-led-21.bin) | 修 PngGaugeCard 底图缺失 (LVGL FS driver 兜底) |
-| v0.2.0-dev.4 | 2026-06-24 | [📦 v0.2.0-dev.4](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.4/raceguard-firmware-v0.2.0-dev.4-led-21.bin) | DEMO 提示改全屏页 + 5s 倒计时 |
-| v0.2.0-dev.3 | 2026-06-24 | [📦 v0.2.0-dev.3](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.3/raceguard-firmware-v0.2.0-dev.3-led-21.bin) | 激活码 SD 卡持久化 |
-
-完整 release notes + SDK .a / sdk-bundle / SHA: 见 [Releases 页面](https://github.com/RaceGuard/raceguard-mods/releases).
-
-**烧机指南** (从零开始, 含硬件选购 + 工具安装 + 触屏激活): [`docs/FLASH_GUIDE.md`](docs/FLASH_GUIDE.md).
+> ⚠️ **当前 source-only 阶段** — 还没发首个正式 .a release. dev 期烧机用的预编译固件 / SDK .a 暂未公开. 想立刻烧机看效果, 联系维护者要 demo 固件; 想看代码 + 自己改, 直接 fork 即可 (用户 fork 需要私有 core 仓访问权限才能 build, 见 [`CONTRIBUTING.md`](CONTRIBUTING.md)).
+>
+> 首个 release 发布后, 这里会有固件直链下载表 + `./scripts/fetch_core.sh` 自动可用.
 
 ---
-
-## 🛠️ 5 分钟跑起来 (要写代码改的话)
-
-> 前提: macOS / Linux + git + python + pio. 不会装看 [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md).
-
-```bash
-git clone https://github.com/RaceGuard/raceguard-mods.git && cd raceguard-mods
-./scripts/fetch_core.sh                            # 拉预编译 .a (~14MB, curl, 不用 gh)
-./scripts/new_car.sh honda_civic_fk7               # 生成 mod 框架
-vim examples/cars/honda_civic_fk7/profile.cpp      # 30 行业务: PID 边界 + 厂家 DTC
-./scripts/enable_mod.sh cars honda_civic_fk7       # 一行启用 (改 active_mods + pio.ini)
-./scripts/flash_all.sh                             # 烧 firmware + LittleFS
-```
-
-不写代码改的话, 看上面 📥 直接下固件即可.
 
 ---
 
@@ -47,7 +21,7 @@ vim examples/cars/honda_civic_fk7/profile.cpp      # 30 行业务: PID 边界 + 
 
 | 你想 | 怎么做 | 工作量 |
 |------|--------|--------|
-| 立刻看到我车的数据 | 上面表里下固件烧上 | 0 行 |
+| 立刻看到我车的数据 | 等首个 release 出官方固件 (临时联系维护者要 demo) | 0 行 |
 | 启用更多通用表 (OIL_TEMP / BOOST) | `setGaugeEnabled(idx, true)` | 1 行 |
 | 写完整 car mod | 复制 [`examples/cars/bmw_template/`](examples/cars/bmw_template/) 改 | 30 行 |
 | 写主题包 | 复制 [`examples/themes/dark_minimal/`](examples/themes/dark_minimal/) + 烘焙 PNG | 一下午 |

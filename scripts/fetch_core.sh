@@ -44,12 +44,10 @@ for cmd in curl tar sha256sum; do
 done
 
 # ============ Version 解析 ============
-# 优先级 (v0.2.0-dev.3+):
+# 优先级:
 #   1. 命令行参数 (显式最优)
-#   2. CORE_VERSION 文件 (本仓 pin 的版本)
-#   3. 'latest' (无 pin 时拉 GitHub 最新, 含 prerelease)
-# 设计目的: user fork 后跑 ./scripts/fetch_core.sh 总是拉到跟代码兼容的 .a, 不会因
-# 主仓发新 release 突然踩到不兼容变更.
+#   2. CORE_VERSION 文件 (本仓 pin 的版本, 维护者发版后写入)
+#   3. 报错 (当前 source-only 阶段, 等首个正式 release)
 
 if [[ $# -ge 1 ]]; then
     VERSION="$1"
@@ -57,10 +55,19 @@ elif [[ -f "${REPO_ROOT}/CORE_VERSION" ]]; then
     VERSION=$(cat "${REPO_ROOT}/CORE_VERSION" | tr -d '[:space:]')
     echo "===> Using pinned version from CORE_VERSION: ${VERSION}"
 else
-    VERSION="latest"
-fi
+    cat <<'EOF' >&2
+ERROR: 无 CORE_VERSION 文件, 也没指定版本.
 
-# 'latest' 走 GitHub API 取最新 tag (含 prerelease — gh "latest" 标识跳 prerelease, dev 期不能用)
+本仓当前处于 source-only 阶段, 还没发首个正式 .a release. 一旦发版,
+维护者会写 CORE_VERSION 文件 pin 版本, 本脚本即可自动拉取.
+
+如果你是核心维护者, 显式指定版本测试:
+    ./scripts/fetch_core.sh v0.x.y
+
+查可用版本: https://github.com/RaceGuard/raceguard-mods/releases
+EOF
+    exit 1
+fi
 if [[ "${VERSION}" == "latest" ]]; then
     API_URL="https://api.github.com/repos/${REPO}/releases"
     echo "===> Resolving 'latest' via ${API_URL}"
