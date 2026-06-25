@@ -48,7 +48,22 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Fetch raceguard_core (.a + headers, 按 CORE_VERSION pin)
+      # Source-only 阶段守卫: 没 CORE_VERSION 文件 (清完 dev release 后的状态),
+      # fetch_core 必败. 跳过 fetch + build, CI 标绿但显式 log "skipped".
+      # 首个正式 release 后, 维护者写 CORE_VERSION → CI 自动恢复 full build.
+      - name: Check if .a release available
+        id: have_release
+        run: |
+          if [ -f CORE_VERSION ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+            echo "⏭️  No CORE_VERSION file — source-only stage, skipping build."
+            echo "   首个 .a release 发布并写 CORE_VERSION 后, 本 CI 自动恢复 build."
+          fi
+
+      - name: Fetch raceguard_core (.a + sdk-bundle)
+        if: steps.have_release.outputs.available == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -56,6 +71,7 @@ jobs:
           ./scripts/fetch_core.sh
 
       - name: Build firmware (config = ${{ matrix.config }})
+        if: steps.have_release.outputs.available == 'true'
         run: |
           if [ "${{ matrix.config }}" = "default" ]; then
             pio run -e round-led-21
@@ -65,10 +81,11 @@ jobs:
           fi
 
       - name: Build LittleFS image (default config only)
-        if: matrix.config == 'default'
+        if: steps.have_release.outputs.available == 'true' && matrix.config == 'default'
         run: pio run -e round-led-21 -t buildfs
 
       - name: Report sizes
+        if: steps.have_release.outputs.available == 'true'
         run: |
           echo "=== firmware.bin (${{ matrix.config }}) ==="
           ls -la .pio/build/round-led-21/firmware.bin
