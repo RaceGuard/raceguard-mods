@@ -9,9 +9,15 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 ---
 
-> ⚠️ **当前 source-only 阶段** — 还没发首个正式 .a release. dev 期烧机用的预编译固件 / SDK .a 暂未公开. 想立刻烧机看效果, 联系维护者要 demo 固件; 想看代码 + 自己改, 直接 fork 即可 (用户 fork 需要私有 core 仓访问权限才能 build, 见 [`CONTRIBUTING.md`](CONTRIBUTING.md)).
->
-> 首个 release 发布后, 这里会有固件直链下载表 + `./scripts/fetch_core.sh` 自动可用.
+## 📥 下载固件 (不写代码, 直接烧机)
+
+| 版本 | 日期 | 烧机固件 (4.8 MB) | 摘要 |
+|------|------|------------------|------|
+| **v0.2.0** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.0-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0/raceguard-firmware-v0.2.0-led-21.bin) | 首个正式 release. dev 期 9 版收口, LittleFS 主题 / 激活 / LVGL FS / license gate / strip 全就绪 |
+
+完整 release notes + SDK .a / sdk-bundle / SHA 校验: 见 [v0.2.0 release 页面](https://github.com/RaceGuard/raceguard-mods/releases/tag/v0.2.0).
+
+**烧机指南** (从零开始, 含硬件选购 + 工具安装 + 触屏激活): [`docs/FLASH_GUIDE.md`](docs/FLASH_GUIDE.md).
 
 ---
 
@@ -21,7 +27,7 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 | 你想 | 怎么做 | 工作量 |
 |------|--------|--------|
-| 立刻看到我车的数据 | 等首个 release 出官方固件 (临时联系维护者要 demo) | 0 行 |
+| 立刻看到我车的数据 | 上面表里下固件烧上 | 0 行 |
 | 启用更多通用表 (OIL_TEMP / BOOST) | `setGaugeEnabled(idx, true)` | 1 行 |
 | 写完整 car mod | 复制 [`examples/cars/bmw_template/`](examples/cars/bmw_template/) 改 | 30 行 |
 | 写主题包 | 复制 [`examples/themes/dark_minimal/`](examples/themes/dark_minimal/) + 烘焙 PNG | 一下午 |
