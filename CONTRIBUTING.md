@@ -1,7 +1,7 @@
 # Contributing to RaceGuard Mods
 
-欢迎贡献! 本项目正处于 **v0.1.x 早期** 阶段, API 可能还在小幅调整,
-但车型适配 / 主题包 这类纯应用层 PR 已经欢迎合入.
+欢迎贡献! 本项目目前在 **v0.2.0-dev** 阶段 (见 [`CORE_VERSION`](CORE_VERSION) / [最新 release](https://github.com/RaceGuard/raceguard-mods/releases)),
+SDK API 可能还在小幅调整, 但车型适配 / 主题包 这类纯应用层 PR 已经欢迎合入.
 
 ## 你能贡献什么
 

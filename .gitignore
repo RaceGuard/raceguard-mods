@@ -22,6 +22,7 @@ lib/raceguard_core/*.so
 lib/raceguard_core/*.dylib
 lib/raceguard_core/include/
 lib/raceguard_core/lv_conf.h
+lib/raceguard_core/BUILD_INFO.txt
 lib/raceguard_core/sdk-bundle-*.tar.gz
 lib/raceguard_core/headers-*.tar.gz
 lib/raceguard_core/checksums.sha256

@@ -130,5 +130,13 @@ tar -xzf "${BUNDLE_TAR}" --strip-components=1
 echo
 echo "===> 完成. lib/raceguard_core/ 内容:"
 ls -lh "${LIB_DIR}/"
+
+# 打印 BUILD_INFO (核心库工具链版本, 报 issue 时让维护者快速 triage ABI 问题)
+if [[ -f "${LIB_DIR}/BUILD_INFO.txt" ]]; then
+    echo
+    echo "===> Build info (link 失败时把这段附进 issue):"
+    sed 's/^/  /' "${LIB_DIR}/BUILD_INFO.txt"
+fi
+
 echo
 echo "===> 现在可以编译:  pio run -e ${ENV_NAME}"

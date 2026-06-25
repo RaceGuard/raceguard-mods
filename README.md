@@ -13,7 +13,8 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 | 版本 | 日期 | 烧机固件 (4.8 MB) | 更新摘要 |
 |------|------|------------------|---------|
-| **v0.2.0-dev.6** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.0-dev.6-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.6/raceguard-firmware-v0.2.0-dev.6-led-21.bin) | lv_conf.h 进 SDK bundle, 砍双源漂移 |
+| **v0.2.0-dev.7** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.0-dev.7-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.7/raceguard-firmware-v0.2.0-dev.7-led-21.bin) | adapter 加 license gate (堵开放层绕过激活) + BUILD_INFO |
+| v0.2.0-dev.6 | 2026-06-25 | [📦 v0.2.0-dev.6](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.6/raceguard-firmware-v0.2.0-dev.6-led-21.bin) | lv_conf.h 进 SDK bundle, 砍双源漂移 |
 | v0.2.0-dev.5 | 2026-06-24 | [📦 v0.2.0-dev.5](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.5/raceguard-firmware-v0.2.0-dev.5-led-21.bin) | 修 PngGaugeCard 底图缺失 (LVGL FS driver 兜底) |
 | v0.2.0-dev.4 | 2026-06-24 | [📦 v0.2.0-dev.4](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.4/raceguard-firmware-v0.2.0-dev.4-led-21.bin) | DEMO 提示改全屏页 + 5s 倒计时 |
 | v0.2.0-dev.3 | 2026-06-24 | [📦 v0.2.0-dev.3](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0-dev.3/raceguard-firmware-v0.2.0-dev.3-led-21.bin) | 激活码 SD 卡持久化 |
