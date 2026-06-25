@@ -13,7 +13,8 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 | 版本 | 日期 | 烧机固件 (4.8 MB) | 摘要 |
 |------|------|------------------|------|
-| **v0.2.0** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.0-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0/raceguard-firmware-v0.2.0-led-21.bin) | 首个正式 release. dev 期 9 版收口, LittleFS 主题 / 激活 / LVGL FS / license gate / strip 全就绪 |
+| **v0.2.1** ⭐ | 2026-06-25 | [📦 raceguard-firmware-v0.2.1-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.1/raceguard-firmware-v0.2.1-led-21.bin) | security patch: license gate 下沉到真 egress + LVGL 精确锁 8.4.0 |
+| v0.2.0 | 2026-06-25 | [📦 v0.2.0](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.2.0/raceguard-firmware-v0.2.0-led-21.bin) | 首个正式 release. dev 期 9 版收口 |
 
 完整 release notes + SDK .a / sdk-bundle / SHA 校验: 见 [v0.2.0 release 页面](https://github.com/RaceGuard/raceguard-mods/releases/tag/v0.2.0).
 
