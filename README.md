@@ -13,11 +13,11 @@ ESP32 + LVGL 车载 OBD 仪表盘 — 烧上跑任何 OBD-II 车, 想 DIY 就改
 
 | 版本 | 日期 | 烧机固件 (4.8 MB) | 摘要 |
 |------|------|------------------|------|
-| **v0.9.0** ⭐ | 2026-06-27 | [📦 raceguard-firmware-v0.9.0-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.9.0/raceguard-firmware-v0.9.0-led-21.bin) | 修复 SD 卡无法记录 + 仪表切换白屏两个 P0 bug. 双仓编号统一对齐. |
+| **v0.9.1** ⭐ | 2026-06-28 | [📦 raceguard-firmware-v0.9.1-led-21.bin](https://github.com/RaceGuard/raceguard-mods/releases/download/v0.9.1/raceguard-firmware-v0.9.1-led-21.bin) | 修复仪表 PNG 底图每帧重 decode 导致 OBD 响应延迟 1-2 秒 (P0). 主 loop 从 ~1.3s/轮 恢复到 ~2.4ms/轮. |
 
-> ⚠️ 旧版 v0.2.0/v0.2.1/v0.2.2 含 SD 死锁 + 仪表白屏 bug, 已下架, 请直接用 v0.9.0.
+> ⚠️ 旧版 v0.2.x / v0.9.0 已下架, 请直接用 v0.9.1.
 
-完整 release notes + SDK .a / sdk-bundle / SHA 校验: 见 [v0.9.0 release 页面](https://github.com/RaceGuard/raceguard-mods/releases/tag/v0.9.0).
+完整 release notes + SDK .a / sdk-bundle / SHA 校验: 见 [v0.9.1 release 页面](https://github.com/RaceGuard/raceguard-mods/releases/tag/v0.9.1).
 
 **烧机指南** (从零开始, 含硬件选购 + 工具安装 + 触屏激活): [`docs/FLASH_GUIDE.md`](docs/FLASH_GUIDE.md).
 
